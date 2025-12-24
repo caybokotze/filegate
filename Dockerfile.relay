@@ -6,12 +6,9 @@ WORKDIR /app
 # Install git for fetching dependencies
 RUN apk add --no-cache git
 
-# Copy go mod files
-COPY go.mod go.sum ./
-RUN go mod download
-
-# Copy source code
+# Copy source code (before go mod download due to local replace directive)
 COPY . .
+RUN go mod download
 
 # Build the relay server
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o relay ./cmd/relay
